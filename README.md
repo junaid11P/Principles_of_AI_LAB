@@ -2,6 +2,7 @@
 
 
 **Prompting Guide for Non-Tech Users**
+
 📌 Tips for Effective Prompting:
 
 1. Be specific: Mention exactly what you want (e.g., formal email, summary, bullet points).
