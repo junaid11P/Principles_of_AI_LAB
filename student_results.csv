@@ -1,0 +1,6 @@
+Roll_No,Name,Maths,Science,English,Total,Average,Passed
+1,Alice,88,92,81,261,87.0,True
+2,Bob,76,85,79,240,80.0,True
+3,Charlie,90,78,88,256,85.33333333333333,True
+4,David,66,74,70,210,70.0,True
+5,Eva,95,88,85,268,89.33333333333333,True
