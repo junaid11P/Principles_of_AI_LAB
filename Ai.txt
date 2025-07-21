@@ -1,0 +1,591 @@
+BFS : 
+
+from collections import deque
+graph = {
+    'A' : ['B','C'],
+    'B' : ['D','E'],
+    'C' : ['F'],
+    'D' : [],
+    'E' : ['F'],
+    'F' : []
+}
+visited =[]
+queue = []
+def bfs(viisted, graph, node):
+    visited.append(node)
+    queue.append(node)
+    while queue:
+        s = queue.pop(0)
+        print(s, end = " ")
+        for neighbour in graph[s]:
+            if neighbour not in visited:
+                visited.append(neighbour)
+                queue.append(neighbour)
+bfs(visited, graph, 'A')
+
+OUTPUT : A B C D E F
+
+
+DFS Iterative :
+ 
+def dfs_iterative(graph, start):
+    visited =set()
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            print(node, end=" ")
+            visited.add(node)
+            stack.extend(set(graph[node])- visited)
+graph={
+    'A':['B','C'],
+    'B':['A','D','E'],
+    'C':['A','F'],
+    'D':['B'],
+    'E':['B'],
+    'F':['C'],
+    'G':['C'],
+    'H':['E'],
+}
+print("\nIterative DFS:")
+dfs_iterative(graph,'A')
+
+OUTPUT : Iterative DFS:
+A C F B E D
+
+DFS Iterative : 
+def dfs_recursive(graph, node, visited):
+    if node not in visited:
+        print(node, end=" ")
+        visited.add(node)
+        for neighbor in graph[node]:
+            dfs_recursive(graph, neighbor, visited)
+graph={
+    'A':['B','C'],
+    'B':['A','D','E'],
+    'C':['A','F'],
+    'D':['B'],
+    'E':['B'],
+    'F':['C'],
+    'G':['C'],
+    'H':['E'],
+}
+visited_set = set()
+print("Recursive DFS:")
+dfs_recursive(graph, 'A', visited_set)
+
+OUTPUT: Recursive DFS:
+A B D E C F
+
+A* 
+def aStarAlgo(start_node, stop_node):
+    open_set = set([start_node])
+    closed_set = set()
+    g = {}  # Store cost from start to node
+    parents = {}  # Store parent nodes for path reconstruction
+    g[start_node] = 0  # The start node has a cost of 0
+    parents[start_node] = start_node
+
+    while len(open_set) > 0:
+        # Get the node with the lowest f(n) = g(n) + heuristic(n)
+        n = None
+        for v in open_set:
+            if n is None or g[v] + heuristic(v) < g[n] + heuristic(n):
+                n = v
+
+        # If we reached the goal or there's no valid path
+        if n == stop_node:
+            path = []
+            while parents[n] != n:
+                path.append(n)
+                n = parents[n]
+            path.append(start_node)
+            path.reverse()
+            print('Path found: {}'.format(path))
+            return path
+
+        if Graph_nodes.get(n) is None:
+            print('Path does not exist!')
+            return None
+
+        # Explore neighbors
+        for (m, weight) in get_neighbors(n):
+            if m not in open_set and m not in closed_set:
+                open_set.add(m)
+                parents[m] = n
+                g[m] = g[n] + weight
+            else:
+                if g[m] > g[n] + weight:
+                    g[m] = g[n] + weight
+                    parents[m] = n
+                    if m in closed_set:
+                        closed_set.remove(m)
+                        open_set.add(m)
+
+        open_set.remove(n)
+        closed_set.add(n)
+
+    print('Path does not exist!')
+    return None
+def get_neighbors(v):
+    return Graph_nodes.get(v, [])
+def heuristic(n):
+    H_dist = {
+        'A': 11,
+        'B': 6,
+        'C': 5,
+        'D': 7,
+        'E': 3,
+        'F': 6,
+        'G': 5,
+        'H': 3,
+        'I': 1,
+        'J': 0
+    }
+    return H_dist.get(n, float('inf'))  # Return infinity if node is not found in heuristic map
+Graph_nodes = {
+    'A': [('B', 6), ('F', 3)],
+    'B': [('A', 6), ('C', 3), ('D', 2)],
+    'C': [('B', 3), ('E', 5)],  # Removed the loop ('C', 1)
+    'D': [('B', 2), ('C', 1), ('E', 8)],
+    'E': [('C', 5), ('D', 8), ('I', 5), ('J', 5)],
+    'F': [('A', 3), ('G', 1), ('H', 7)],
+    'G': [('F', 1), ('I', 3)],
+    'H': [('F', 7), ('I', 2)],
+    'I': [('E', 5), ('G', 3), ('H', 2), ('J', 3)],
+}
+aStarAlgo('A', 'J')
+
+OUTPUT : Path found: ['A', 'F', 'G', 'I', 'J']
+
+['A', 'F', 'G', 'I', 'J']
+
+8 Puzzle 
+import heapq
+#Goal state for reference
+GOAL_STATE = [[1,2,3],[4,5,6],[7,8,0]]
+#Move for Up, Down, Left, Right
+MOVES=[(-1,0),(1,0),(0,-1),(0,1)]
+#convert board to tuple for hashing
+def board_to_tuple(board):
+    return tuple(tuple(row) for row in board)
+#Manhattan distance heuristic
+def manhattan(board):
+    distance=0
+    for i in range(3):
+        for j in range(3):
+            val = board[i][j]
+            if val !=0:
+                goal_x,goal_y=divmod(val -1,3)
+                distance+=abs(goal_x-i)+abs(goal_y-j)
+    return distance
+#Find the (x,y) position of 0
+def find_zero(board):
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == 0:
+                return i, j
+
+def solve_puzzle(start_board):
+    
+    visited = set()
+    heap = []
+    g_score = 0
+    f_score = manhattan(start_board)
+    heapq.heappush(heap, (f_score, g_score, start_board, []))
+    while heap:
+        f, g, board, path = heapq.heappop(heap)
+        board_tuple = board_to_tuple(board)
+        if board == GOAL_STATE:
+            return path + [board]
+        if board_tuple in visited:
+            continue
+        visited.add(board_tuple)
+        zero_x, zero_y = find_zero(board)
+        for dx, dy in MOVES:
+            new_x, new_y = zero_x + dx, zero_y + dy
+            if 0 <= new_x < 3 and 0 <= new_y < 3:
+                # Swap zero with target cell
+                new_board = [row[:] for row in board]
+                new_board[zero_x][zero_y], new_board[new_x][new_y] = new_board[new_x][new_y], new_board[zero_x][zero_y]
+                new_tuple = board_to_tuple(new_board)
+                if new_tuple not in visited:
+                    new_g = g + 1
+                    new_f = new_g + manhattan(new_board)
+                    heapq.heappush(heap, (new_f, new_g, new_board, path + [board]))
+    return None 
+
+start = [[1, 2, 3],
+         [4, 0, 6],
+         [7, 5, 8]]
+
+solution = solve_puzzle(start)
+if solution:
+    print("Solution found in", len(solution) - 1, "moves:")
+    for step in solution:
+        for row in step:
+            print(row)
+        print("------")
+
+
+Classification (Decision Tree)
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import metrics
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+
+# Load the iris dataset
+iris = load_iris()
+X = iris.data  # Features
+y = iris.target  # Labels
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Initialize the Decision Tree Classifier
+clf = DecisionTreeClassifier(random_state=42)
+
+# Train the classifier
+clf.fit(X_train, y_train)
+
+# Make predictions
+y_pred = clf.predict(X_test)
+
+# Evaluate the model
+print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+print("Confusion Matrix:")
+print(metrics.confusion_matrix(y_test, y_pred))
+
+# Plot the decision tree
+plt.figure(figsize=(12,8))
+plot_tree(clf, filled=True, feature_names=iris.feature_names, class_names=iris.target_names, rounded=True)
+plt.show()
+
+
+Classification(KNN)
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+# Sample dataset: Features (X) and Labels (y)
+X = np.array([[2, 3], [1, 1], [3, 5], [5, 2], [3, 1], [4, 4], [6, 3], [7, 2]])
+y = np.array([0, 0, 1, 1, 0, 1, 0, 1])
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Create and train the KNN Classifier
+k = 3  # Number of neighbors
+knn = KNeighborsClassifier(n_neighbors=k)
+knn.fit(X_train, y_train)
+
+# Predict on the test set
+y_pred = knn.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy * 100:.2f}%")
+
+# Plot the data points
+plt.scatter(X[:, 0], X[:, 1], c=y, cmap='coolwarm', edgecolors='k')
+plt.xlabel('Feature 1')
+plt.ylabel('Feature 2')
+plt.title('KNN Classification')
+plt.show()
+
+KNN Classification :
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+iris=load_iris()
+x=iris.data
+y=iris.target
+x_train,x_test,y_train,y_test=train_test_split(x,y, test_size=0.3, random_state=42)
+k=3
+knn=KNeighborsClassifier(n_neighbors=k)
+knn.fit(x_train,y_train)
+y_pred=knn.predict(x_test)
+accuracy=accuracy_score(y_test,y_pred)
+print(f"Accuracy of KNN (k={k}): {accuracy *100:.2f}%")
+
+OUTPUT : Accuracy of KNN (k=3): 100.00%
+
+
+Matplotlib
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, 6, 9)
+print("x values:", x)
+
+y = np.linspace(3, 9, 9)
+print("y values:", y)
+
+plt.plot(x, y)
+plt.xlabel('This is x axis')
+plt.ylabel('This is Y axis')
+plt.title('Random label')
+plt.show()
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate x and y values
+x = np.linspace(0, 6, 9)
+y = np.linspace(3, 9, 9)
+
+# Line plot
+plt.plot(x, y, label='Line Plot')
+plt.xlabel('This is x axis')
+plt.ylabel('This is Y axis')
+plt.title('Random label')
+plt.legend()
+plt.show()
+
+# Additional line plots
+plt.plot([1, 2, 3, 4, 5], [6, 7, 8, 9, 10], label='Population')
+plt.plot([1, 2, 3, 4, 5], [2, 4, 6, 8, 10], label='Consumption')
+plt.xlabel('This is x axis')
+plt.ylabel('This is Y axis')
+plt.title('Random label')
+plt.legend()
+plt.show()
+
+# Bar chart
+plt.bar([1, 2, 3, 4, 5], [2, 4, 6, 8, 10], label='Movies')
+plt.xlabel('This is x axis for BAR')
+plt.ylabel('This is Y axis for BAR')
+plt.title('Random label for BAR chart')
+plt.legend()
+plt.show()
+
+# Histogram
+peerPerProduct = [1, 5, 8, 6, 8, 4, 5, 1, 7, 3, 8, 3, 5, 2, 8, 5, 8, 3, 2, 6, 1]
+bins = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+plt.hist(peerPerProduct, bins, histtype='bar', rwidth=0.6)
+plt.xlabel('Bins')
+plt.ylabel('Frequency')
+plt.title('Histogram')
+plt.show()
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Data
+myDays = [1, 2, 3, 4, 5]
+organic = [8, 9, 8, 3, 3]
+ads = [8, 9, 7, 12, 8]
+affiliate = [3, 5, 5, 4, 3]
+seller = [9, 5, 8, 9, 14]
+
+# Labeling the lines for the legend (using empty plots)
+plt.plot([], [], color='#F97F51', label='organic')
+plt.plot([], [], color='#1B9CFC', label='ads')
+plt.plot([], [], color='#F8EFBA', label='affiliate')
+plt.plot([], [], color='#58B19F', label='seller')
+
+# Create the stackplot
+plt.stackplot(myDays, organic, ads, affiliate, seller, colors=['#F97F51', '#1B9CFC', '#F8EFBA', '#58B19F'])
+
+# Add labels and legend
+plt.xlabel('Number of days')
+plt.ylabel('Sales')
+plt.legend()
+
+# Display the plot
+plt.show()
+
+mypieLabels = ['FB', 'GOOGLE', 'LinkedIn', 'Pinterest', 'Twitter']
+piecolors = ['#F97F51', '#1B9CFC', '#FD7272', '#58B19F', '#55E6C1']
+ads = [8, 9, 7, 12, 8]
+
+# Create the pie chart
+plt.pie(ads, labels=mypieLabels, colors=piecolors, explode=(0, 0.2, 0, 0, 0.1))
+
+# Display the plot
+plt.show()
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df1 = sns.load_dataset('titanic')
+print(df1.head())
+
+cusPal = {'male': '#6ab04c', 'female': '#ff7979'}
+
+plot1 = sns.lmplot(x='age', y='survived', hue='sex', col='sex', palette=cusPal, data=df1)
+
+sns.set_context()
+plt.show()
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+myDataFrame = sns.load_dataset('exercise')
+print(myDataFrame.head())
+
+myplot = sns.catplot(x='time', y='pulse', hue='kind', col='diet', data=myDataFrame, kind='point')
+
+plt.show()
+print(myDataFrame)
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+iris = sns.load_dataset('iris')
+print(iris.head())
+
+sns.swarmplot(x='species', y='petal_length', data=iris)
+
+plt.show()
+
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+myTitanic = sns.load_dataset('titanic')
+print(myTitanic.head())
+
+sns.histplot(myTitanic['fare'], kde=True)
+sns.histplot(myTitanic['fare'], kde=False, bins=5)
+
+sns.jointplot(x='age', y='fare', data=myTitanic)
+
+myTips = sns.load_dataset('tips')
+print(myTips.head())
+
+sns.pairplot(myTips)
+
+plt.show()
+
+Numpy
+#1.NumPy is a powerful library for handling arrays and numerical computations in Python.
+import numpy as n
+myarray = n.array([[1,2],[3,4]])  
+print("Array Type: ",type(myarray)) 
+print("No. of dimensions: ",myarray.ndim)  
+print("Shape of array: ",myarray.shape)  
+print("Size of array: ",myarray.size)  
+print("Array store elements of type: ",myarray.dtype)
+
+#2.Array Indexing
+import numpy as np 
+arr = np.array([[-1, 2, 0, 4], 
+                [4, -0.5, 6, 0], 
+                [2.6, 0, 7, 8], 
+                [3, -7, 4, 2.0]]) 
+temp = arr[:2, ::2] 
+print ("Array with first 2 rows and alternate columns (0 and 2):\n", temp) 
+temp = arr[[0, 1, 2, 3], [3, 2, 1, 0]] 
+print ("\nElements at indices (0, 3), (1, 2), (2, 1), (3, 0):\n", temp) 
+cond = arr > 0
+temp = arr[cond] 
+print ("\nElements greater than 0:\n", temp)
+
+#3.Basic operations (Operations on single array)
+import numpy as np 
+a = np.array([1, 2, 5, 3]) 
+print ("Adding 1 to every element:", a+1) 
+print ("Subtracting 3 from each element:", a-3) 
+print ("Multiplying each element by 10:", a*10) 
+print ("Squaring each element:", a**2) 
+a *= 2
+print ("Doubled each element of original array:", a) 
+a = np.array([[1, 2, 3], [3, 4, 5], [9, 6, 0]]) 
+print ("\nOriginal array:\n", a) 
+print ("Transpose of array:\n", a.T)
+
+#4.Unary operators:
+import numpy as np 
+arr = np.array([[1, 5, 6], 
+                [4, 7, 2], 
+                [3, 1, 9]]) 
+print ("Largest element is:", arr.max()) 
+print ("Row-wise maximum elements:", arr.max(axis = 1)) 
+print ("Column-wise minimum elements:", arr.min(axis = 0)) 
+print ("Sum of all array elements:", arr.sum()) 
+print ("Cumulative sum along each row:\n", arr.cumsum(axis = 1))
+
+#5.Binary operators: 
+import numpy as np 
+a = np.array([[1, 2],  [3, 4]]) 
+b = np.array([[4, 3], [2, 1]]) 
+print ("Array sum:\n", a + b) 
+print ("Array multiplication:\n", a*b) 
+print ("Matrix multiplication:\n", a.dot(b))
+
+#6.Sorting 
+import numpy as np 
+  
+a = np.array([[1, 4, 2], 
+                 [3, 4, 6], 
+              [0, -1, 5]]) 
+  
+# sorted array 
+print ("Array elements in sorted order:\n", 
+                    np.sort(a, axis = None)) 
+  
+# sort array row-wise 
+print ("Row-wise sorted array:\n", 
+                np.sort(a, axis = 1)) 
+  
+# specify sort algorithm 
+print ("Column wise sort by applying merge-sort:\n", 
+            np.sort(a, axis = 0, kind = 'mergesort')) 
+  
+# set alias names for dtypes 
+dtypes = [('name', 'S10'), ('grad_year', int), ('cgpa', float)] 
+  
+# Values to be put in array 
+values = [('Hrithik', 2009, 8.5), ('Ajay', 2008, 8.7),  
+           ('Pankaj', 2008, 7.9), ('Aakash', 2009, 9.0)] 
+             
+# Creating array 
+arr = np.array(values, dtype = dtypes) 
+print ("\nArray sorted by names:\n", 
+            np.sort(arr, order = 'name')) 
+              
+print ("Array sorted by grauation year and then cgpa:\n", 
+                np.sort(arr, order = ['grad_year', 'cgpa']))
+
+
+#7.Functions
+
+import numpy as np 
+a = np.array([[3,7,5],[8,4,3],[2,4,9]]) 
+
+print ('Our array is:') 
+print (a)    
+
+print ('Applying amin() function:') 
+print (np.amin(a,1)) 
+
+print ('Applying amin() function again:') 
+print (np.amin(a,0) )
+
+print ('Applying amax() function:' )
+print (np.amax(a) )
+
+print ('Applying amax() function again:' )
+print (np.amax(a, axis = 0))
+
+print ('Applying ptp() function:')
+print (np.ptp(a)) 
+
+print ('Applying ptp() function along axis 1:') 
+print (np.ptp(a, axis = 1))
+
+print ('Applying ptp() function along axis 0:')
+print (np.ptp(a, axis = 0) == 0)
+
+
+
