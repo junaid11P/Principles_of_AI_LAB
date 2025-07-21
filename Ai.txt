@@ -26,6 +26,8 @@ bfs(visited, graph, 'A')
 OUTPUT : A B C D E F
 
 
+
+
 DFS Iterative :
  
 def dfs_iterative(graph, start):
@@ -54,6 +56,8 @@ OUTPUT : Iterative DFS:
 A C F B E D
 
 
+
+
 DFS Recursive : 
 def dfs_recursive(graph, node, visited):
     if node not in visited:
@@ -77,6 +81,8 @@ dfs_recursive(graph, 'A', visited_set)
 
 OUTPUT: Recursive DFS:
 A B D E C F
+
+
 
 
 
@@ -162,6 +168,7 @@ aStarAlgo('A', 'J')
 OUTPUT : Path found: ['A', 'F', 'G', 'I', 'J']
 
 ['A', 'F', 'G', 'I', 'J']
+
 
 
 
@@ -331,6 +338,9 @@ OUTPUT : Accuracy of KNN (k=3): 100.00%
 
 
 
+
+
+
 Matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
@@ -481,6 +491,7 @@ print(myTips.head())
 sns.pairplot(myTips)
 
 plt.show()
+
 
 
 
